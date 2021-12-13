@@ -164,7 +164,7 @@ class POLYU_COVID19_CXR_CT_Cohort1(Dataset):
 # Dongrong Dataset and similar dataset structures
 #########################
 class Coviddataset(Dataset):
-    def __init__(self, normal_path, pneumonia_path, covid_path, transform=None, NClasses=3, unbias=False, channels=3 ):
+    def __init__(self, normal_path, pneumonia_path, covid_path, transform=None, NClasses=3, unbias=False, channels=3, display_console=True ):
         """
         Args:
             normal_path, pneumonia_path, covid_path: path to image directory.
@@ -195,8 +195,9 @@ class Coviddataset(Dataset):
         normal_image_names, normal_labels = self.imageNamesAndLabels(normal_path, normal_label, labels=None, image_names=None)
         pneumonia_image_names, pneumonia_labels = self.imageNamesAndLabels(pneumonia_path, pneumonia_label, labels=None, image_names=None)
         covid_image_names, covid_labels = self.imageNamesAndLabels(covid_path, covid_label, labels=None, image_names=None)
-        print("RAW DATASET STATISTICS:-----------")
-        print("Normal:{}, Pneumonia:{}, COVID:{}".format(len(normal_image_names), len(pneumonia_image_names), len(covid_image_names)))
+        if display_console:
+            print("RAW DATASET STATISTICS:-----------")
+            print("Normal:{}, Pneumonia:{}, COVID:{}".format(len(normal_image_names), len(pneumonia_image_names), len(covid_image_names)))
         if NClasses == 2:
             normal_labels.extend(pneumonia_labels)
             noncovid_labels = normal_labels
@@ -212,8 +213,9 @@ class Coviddataset(Dataset):
                 sampled_package = random.sample(noncovid_package, unbiased_noncovid_samples)
                 noncovid_image_names[:], noncovid_labels[:]=zip(*sampled_package) # unzip
             
-            print("2-Class Dataset Statistics:-----------")
-            print("Noncovid:{}, COVID:{}".format(len(noncovid_image_names), len(covid_image_names)))
+            if display_console:
+                print("2-Class Dataset Statistics:-----------")
+                print("Noncovid:{}, COVID:{}".format(len(noncovid_image_names), len(covid_image_names)))
             
             noncovid_image_names.extend(covid_image_names)
             image_names = noncovid_image_names
