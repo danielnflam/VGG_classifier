@@ -1,6 +1,7 @@
 import torchvision.models
 import torch
 import torch.nn as nn
+import numpy as np
 
 class VGG16_pretrained(nn.Module):
     def __init__(self, N_CLASSES, verbose):
@@ -35,9 +36,10 @@ class VGG16_Rajaraman(nn.Module):
         vgg16_pt = torchvision.models.vgg16(pretrained=True)
         self.vgg16_conv = vgg16_pt.features
         # Freeze layers
-        for layer_idx in range(self.max_layer_to_freeze):
-            for param in self.vgg16_conv[layer_idx].parameters():
-                param.requires_grad = False
+        self.freeze_layers_VGG16(np.arange(0,max_layer_to_freeze))
+        #for layer_idx in range(self.max_layer_to_freeze):
+        #    for param in self.vgg16_conv[layer_idx].parameters():
+        #        param.requires_grad = False
         
         self.GAP = nn.AdaptiveAvgPool2d((1,1)) # global average pooling
         self.dropout = nn.Dropout(p=0.5)
@@ -60,3 +62,7 @@ class VGG16_Rajaraman(nn.Module):
         x = self.flatten(x)
         x = self.classifier(x)
         return x
+    def freeze_layers_VGG16(self, layers, freeze=True):
+        for layer_idx in layers:
+            for param in self.vgg16_conv[layer_idx].parameters():
+                param.requires_grad = not(freeze)

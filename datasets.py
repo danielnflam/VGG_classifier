@@ -173,6 +173,7 @@ class Coviddataset(Dataset):
             unbias: True in order to force the number of training data elements in each class to be roughly equivalent for every epoch
             channels: 1 or 3 -- if 1, image is extracted as 'L', otherwise 'RGB'
         """
+        self.display_console=display_console
         image_names=[]
         labels=[]
         
@@ -279,7 +280,8 @@ class Coviddataset(Dataset):
                 label = label_for_all
                 labels.append(label)
         else:
-            print("None Path")
+            if self.display_console:
+                print("None Path")
         return image_names, labels
     
 class DongrongCOVIDDataset_OLD(Dataset):
